@@ -1,0 +1,16 @@
+﻿<Application x:Class="PUBGMortar.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PUBGMortar"
+             xmlns:converters="clr-namespace:PUBGMortar.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Converters -->
+            <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter"/>
+            <converters:BoolToListenTextConverter x:Key="BoolToListenTextConverter"/>
+            <converters:BoolToListenIconConverter x:Key="BoolToListenIconConverter"/>
+            <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
