@@ -156,17 +156,28 @@
             <!-- 操作说明 -->
             <Border Style="{StaticResource CardStyle}" Margin="0">
                 <StackPanel>
-                    <TextBlock Text="操作说明" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,12"/>
+                    <TextBlock Text="快捷键" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,12"/>
 
-                    <Grid Margin="0,0,0,8">
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Background="#00A86B" CornerRadius="4" Padding="8,4" Margin="0,0,12,0">
+                            <TextBlock Text="Alt+Q" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                        </Border>
+                        <TextBlock Grid.Column="1" Text="测量/关闭提示" Foreground="White" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Border Background="#D4A000" CornerRadius="4" Padding="8,4" Margin="0,0,12,0">
-                            <TextBlock Text="Alt+Q" Foreground="Black" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock Text="Ctrl+Alt+Q" Foreground="Black" FontSize="11" FontWeight="Bold"/>
                         </Border>
-                        <TextBlock Grid.Column="1" Text="开始测量" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="重置比例尺并测量" Foreground="White" VerticalAlignment="Center"/>
                     </Grid>
 
                     <Grid Margin="0,0,0,12">
@@ -182,7 +193,7 @@
 
                     <TextBlock Text="测量步骤:" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,4"/>
                     <TextBlock TextWrapping="Wrap" Foreground="#AAA" FontSize="11" LineHeight="18"
-                               Text="1. Alt+Q 开始测量&#x0a;2. Alt+左键 在地图100m网格两端点击&#x0a;3. Alt+左键 点击你的位置和目标位置&#x0a;4. Alt+左键 瞄准目标后点击获取仰角&#x0a;5. 查看结果设置迫击炮"/>
+                               Text="1. Alt+Q开始测量 (有提示则关闭)&#x0a;2. 首次自动设置100m比例尺&#x0a;3. 点击你的位置和目标位置&#x0a;4. 瞄准目标后点击获取仰角&#x0a;5. 查看结果设置迫击炮&#x0a;6. Alt+Q关闭提示或继续下一次&#x0a;7. Ctrl+Alt+Q可重置比例尺"/>
                 </StackPanel>
             </Border>
         </StackPanel>

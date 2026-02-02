@@ -18,6 +18,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private MeasurementStep _currentStep = MeasurementStep.Idle;
     private (double X, double Y)? _tempPoint;
     private OverlayWindow? _overlayWindow;
+    private bool _hasValidScale;  // 是否已有有效比例尺
 
     [ObservableProperty]
     private string _statusText = "就绪";
@@ -40,6 +41,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _hotkeyService = new GlobalHotkeyService();
 
         _hotkeyService.StartMeasurement += OnStartMeasurement;
+        _hotkeyService.QuickMeasurement += OnQuickMeasurement;
         _hotkeyService.PointSet += OnPointSet;
 
         _hotkeyService.Start();
@@ -87,6 +89,37 @@ public partial class MainViewModel : ObservableObject, IDisposable
         ShowOverlay("设置100米比例尺: 第一点");
     }
 
+    /// <summary>
+    /// 快速测量 - 跳过比例尺设置，使用上一次的比例尺
+    /// 如果提示窗口存在则关闭，不存在则开始测量
+    /// </summary>
+    private void OnQuickMeasurement(object? sender, EventArgs e)
+    {
+        if (!IsListening) return;
+
+        // 如果提示窗口存在，则关闭并取消当前测量
+        if (_overlayWindow != null)
+        {
+            CloseOverlay();
+            _currentStep = MeasurementStep.Idle;
+            _tempPoint = null;
+            StatusText = "已取消";
+            return;
+        }
+
+        if (!_hasValidScale)
+        {
+            // 如果没有有效的比例尺，回退到完整流程
+            OnStartMeasurement(sender, e);
+            return;
+        }
+
+        _currentStep = MeasurementStep.DistancePoint1;
+        _tempPoint = null;
+
+        ShowOverlay("快速测量: 第一点 (你的位置)");
+    }
+
     private void OnPointSet(object? sender, (double X, double Y) point)
     {
         if (!IsListening) return;
@@ -103,6 +136,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 if (_tempPoint.HasValue)
                 {
                     _calculator.SetScaleFactor(_tempPoint.Value, point);
+                    _hasValidScale = true;  // 标记已有有效比例尺
                 }
                 _currentStep = MeasurementStep.DistancePoint1;
                 _tempPoint = null;
@@ -134,16 +168,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 if (result < 0)
                 {
                     ResultText = "无解";
-                    ShowOverlay("计算无解 - 目标超出射程", 3000);
+                    ShowOverlay("计算无解 - 目标超出射程");  // 持续显示，不自动关闭
                 }
                 else
                 {
                     ResultText = $"{result:F0} m";
-                    ShowOverlay($"迫击炮距离: {result:F0} m", 3000);
+                    ShowOverlay($"迫击炮距离: {result:F0} m");  // 持续显示，不自动关闭
                 }
 
                 _currentStep = MeasurementStep.Idle;
-                StatusText = "测量完成";
+                StatusText = "测量完成 (Alt+Q关闭提示)";
                 break;
         }
     }
@@ -184,6 +218,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _hotkeyService.StartMeasurement -= OnStartMeasurement;
+        _hotkeyService.QuickMeasurement -= OnQuickMeasurement;
         _hotkeyService.PointSet -= OnPointSet;
         _hotkeyService.Dispose();
         CloseOverlay();
