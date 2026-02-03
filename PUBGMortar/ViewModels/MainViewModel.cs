@@ -168,12 +168,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 if (result < 0)
                 {
                     ResultText = "无解";
-                    ShowOverlay("计算无解 - 目标超出射程");  // 持续显示，不自动关闭
+                    ShowOverlay($"距离: {_calculator.HorizontalDistance:F0}m | 仰角: {angle:F1}°\n⚠ 目标超出射程");  // 持续显示，不自动关闭
                 }
                 else
                 {
                     ResultText = $"{result:F0} m";
-                    ShowOverlay($"迫击炮距离: {result:F0} m");  // 持续显示，不自动关闭
+                    // 显示完整信息：原始距离、仰角、迫击炮设置
+                    ShowOverlay($"距离: {_calculator.HorizontalDistance:F0}m | 仰角: {angle:F1}°\n🎯 迫击炮: {result:F0} m");  // 持续显示，不自动关闭
                 }
 
                 _currentStep = MeasurementStep.Idle;
