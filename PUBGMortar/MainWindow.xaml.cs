@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using System.Windows.Navigation;
 using PUBGMortar.ViewModels;
 
 namespace PUBGMortar;
@@ -21,5 +23,11 @@ public partial class MainWindow : Window
     {
         _viewModel.Dispose();
         base.OnClosed(e);
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+        e.Handled = true;
     }
 }

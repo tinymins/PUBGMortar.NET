@@ -196,6 +196,25 @@
                                Text="1. Alt+Q开始测量 (有提示则关闭)&#x0a;2. 首次自动设置100m比例尺&#x0a;3. 点击你的位置和目标位置&#x0a;4. 瞄准目标后点击获取仰角&#x0a;5. 查看结果设置迫击炮&#x0a;6. Alt+Q关闭提示或继续下一次&#x0a;7. Ctrl+Alt+Q可重置比例尺"/>
                 </StackPanel>
             </Border>
+
+            <!-- 作者信息 -->
+            <TextBlock HorizontalAlignment="Center" Margin="0,8,0,0">
+                <Hyperlink NavigateUri="https://zhaiyiming.com/feedback"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           Foreground="#888"
+                           TextDecorations="None">
+                    <Hyperlink.Style>
+                        <Style TargetType="Hyperlink">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="#0078D4"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Hyperlink.Style>
+                    作者：茗伊 @tinymins - &lt;root@zhaiyiming.com&gt;
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </Window>
