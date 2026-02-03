@@ -53,9 +53,10 @@ public class MortarCalculator
     /// </summary>
     public void UpdateScreenParameters()
     {
-        // 获取主屏幕分辨率
-        double screenWidth = SystemParameters.PrimaryScreenWidth;
-        double screenHeight = SystemParameters.PrimaryScreenHeight;
+        // 获取主屏幕物理分辨率（不受 DPI 缩放影响）
+        // 使用 Win32 API 获取真实分辨率
+        double screenWidth = GetSystemMetrics(SM_CXSCREEN);
+        double screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
         // 屏幕中心Y坐标 (从0开始计数，所以是 height/2 - 0.5，取整后约等于 height/2 - 1)
         CenterPixelY = screenHeight / 2.0 - 1;
@@ -68,6 +69,13 @@ public class MortarCalculator
         // 最大仰角是垂直FOV的一半
         MaxDegree = verticalFovRad * 180.0 / Math.PI / 2.0;
     }
+
+    // Win32 API 常量
+    private const int SM_CXSCREEN = 0;
+    private const int SM_CYSCREEN = 1;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int nIndex);
 
     /// <summary>
     /// 根据两点设置100米比例尺
@@ -107,9 +115,18 @@ public class MortarCalculator
     /// <returns>仰角 (度)</returns>
     public double GetElevationAngle((double X, double Y) point)
     {
-        // 0度是屏幕中心，MaxDegree是屏幕顶部
+        // 使用正确的角度计算：通过反正切函数将像素偏移转换为角度
+        // deltaY > 0 表示目标在屏幕中心上方（仰角为正）
         double deltaY = CenterPixelY - point.Y;
-        ElevationAngle = deltaY * MaxDegree / CenterPixelY;
+
+        // 计算每像素对应的tan值：屏幕顶部对应 tan(MaxDegree)
+        // tanPerPixel = tan(MaxDegree) / CenterPixelY
+        double maxDegreeRad = MaxDegree * Math.PI / 180.0;
+        double tanPerPixel = Math.Tan(maxDegreeRad) / CenterPixelY;
+
+        // 通过反正切计算实际角度
+        ElevationAngle = Math.Atan(deltaY * tanPerPixel) * 180.0 / Math.PI;
+
         return ElevationAngle;
     }
 
