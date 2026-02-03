@@ -8,6 +8,8 @@
     <UseWPF>true</UseWPF>
     <AssemblyTitle>PUBG Mortar Aid</AssemblyTitle>
     <Description>PUBG迫击炮辅助计算工具</Description>
+    <!-- 应用程序图标 -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
     <!-- 使用管理员权限运行 -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
