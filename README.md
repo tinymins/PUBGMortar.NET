@@ -100,11 +100,13 @@ For targets on the same level (β = 0°), R simply equals L.
 
 ### Resolution & FOV
 
-The default calibration values are for:
-- Resolution: **2560 × 1440**
-- Default game FOV
+The application **automatically detects** your screen resolution and calculates the appropriate parameters:
+- **CenterPixelY** - Auto-calculated from screen height
+- **MaxDegree** - Auto-calculated based on screen aspect ratio using PUBG's Hor+ FOV system
 
-If you use a different resolution, you may need to adjust `CenterPixelY` and `MAX_DEGREE` in the code.
+This means the app should work correctly on any resolution (1080p, 1440p, 4K, ultrawide, etc.) without manual adjustment.
+
+> 💡 The calculation assumes PUBG's default horizontal FOV (~80°). If you've modified the FOV in-game, the elevation angle detection may be slightly off.
 
 ### Administrator Privileges
 

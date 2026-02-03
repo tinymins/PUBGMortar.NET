@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 
 namespace PUBGMortar.Services;
 
@@ -28,14 +29,45 @@ public class MortarCalculator
     public const double MAX_DISTANCE = 700.0;
 
     /// <summary>
-    /// 最大仰角 (度)
+    /// PUBG默认水平FOV (度)
     /// </summary>
-    public const double MAX_DEGREE = 26.19;
+    public const double DEFAULT_HORIZONTAL_FOV = 80.0;
 
     /// <summary>
-    /// 屏幕中心Y坐标 (2560x1440分辨率)
+    /// 最大仰角 (度) - 根据屏幕宽高比自动计算
     /// </summary>
-    public double CenterPixelY { get; set; } = 719;
+    public double MaxDegree { get; private set; }
+
+    /// <summary>
+    /// 屏幕中心Y坐标 - 根据屏幕分辨率自动计算
+    /// </summary>
+    public double CenterPixelY { get; private set; }
+
+    public MortarCalculator()
+    {
+        UpdateScreenParameters();
+    }
+
+    /// <summary>
+    /// 根据当前屏幕分辨率更新参数
+    /// </summary>
+    public void UpdateScreenParameters()
+    {
+        // 获取主屏幕分辨率
+        double screenWidth = SystemParameters.PrimaryScreenWidth;
+        double screenHeight = SystemParameters.PrimaryScreenHeight;
+
+        // 屏幕中心Y坐标 (从0开始计数，所以是 height/2 - 0.5，取整后约等于 height/2 - 1)
+        CenterPixelY = screenHeight / 2.0 - 1;
+
+        // 根据屏幕宽高比计算垂直FOV
+        // PUBG使用Hor+系统：垂直FOV = 2 * arctan(tan(水平FOV/2) * 高度/宽度)
+        double horizontalFovRad = DEFAULT_HORIZONTAL_FOV * Math.PI / 180.0;
+        double verticalFovRad = 2.0 * Math.Atan(Math.Tan(horizontalFovRad / 2.0) * screenHeight / screenWidth);
+
+        // 最大仰角是垂直FOV的一半
+        MaxDegree = verticalFovRad * 180.0 / Math.PI / 2.0;
+    }
 
     /// <summary>
     /// 根据两点设置100米比例尺
@@ -75,9 +107,9 @@ public class MortarCalculator
     /// <returns>仰角 (度)</returns>
     public double GetElevationAngle((double X, double Y) point)
     {
-        // 0度是屏幕中心，MAX_DEGREE是屏幕顶部
+        // 0度是屏幕中心，MaxDegree是屏幕顶部
         double deltaY = CenterPixelY - point.Y;
-        ElevationAngle = deltaY * MAX_DEGREE / CenterPixelY;
+        ElevationAngle = deltaY * MaxDegree / CenterPixelY;
         return ElevationAngle;
     }
 
